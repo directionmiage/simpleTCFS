@@ -7,12 +7,27 @@ on:
       - backend/**
 
 jobs:
-  build:
+  config:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/backend-compile
+      - name: Install Java 11 (Temurin)
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Set up Maven 3.8.4
+        uses: stCarolas/setup-maven@v4.2
+        with:
+          maven-version: 3.8.4
+
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Compile the backend
+        working-directory: ./backend
+        run: mvn compile -DskipTests
 
   test:
     runs-on: ubuntu-20.04
