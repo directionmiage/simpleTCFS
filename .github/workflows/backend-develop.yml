@@ -8,14 +8,12 @@ on:
       - backend/**
 
 jobs:
-  build:
+  config:
     runs-on: ubuntu-20.04
     steps:
-      - uses: ./.github/workflows/backend-config
+      - uses: actions/checkout@v2
+      - uses: ./github-actions/backend-base
 
-      - name: Compile the backend
-        working-directory: ./backend
-        run: mvn compile -DskipTests
 
   test:
     runs-on: ubuntu-20.04

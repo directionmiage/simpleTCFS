@@ -1,4 +1,4 @@
-name: "Configure environment"
+name: "Configure environment and compile backend"
 
 on:
   workflow_call:
@@ -9,9 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
       - name: Install Java 11 (Temurin)
         uses: actions/setup-java@v2
         with:
@@ -22,3 +19,10 @@ jobs:
         uses: stCarolas/setup-maven@v4.2
         with:
           maven-version: 3.8.4
+
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Compile the backend
+        working-directory: ./backend
+        run: mvn compile -DskipTests

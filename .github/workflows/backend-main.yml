@@ -7,15 +7,11 @@ on:
       - backend/**
 
 jobs:
-  build:
+  config:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: ./.github/workflows/backend-config
-
-      - name: Test the backend
-        working-directory: ./backend
-        run: mvn compile -DskipTests
+      - uses: ./.github/workflows/backend-base
 
   test:
     runs-on: ubuntu-20.04
