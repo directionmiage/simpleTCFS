@@ -11,8 +11,9 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Configure and checkout
-      - uses: ./.github/workflows/backend-config.yml
+      - uses: actions/checkout@v2
+      - name: Checkout and configure
+        uses: ./.github/workflows/backend-config
 
       - name: Test the backend
         working-directory: ./backend

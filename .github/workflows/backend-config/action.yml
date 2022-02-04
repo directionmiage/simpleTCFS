@@ -1,11 +1,8 @@
-name: "Check out and configure environment"
-description: "Checks out the repository and configure Java and Maven"
+name: "Configure environment"
+description: "Configure Java and Maven"
 runs:
   using: "composite"
   steps:
-    - name: Check out repository code
-      uses: actions/checkout@v2
-
     - name: Install Java 11 (Temurin)
       uses: actions/setup-java@v2
       with:
@@ -14,5 +11,5 @@ runs:
 
     - name: Set up Maven 3.8.4
       uses: stCarolas/setup-maven@v4.2
-      with:
-        maven-version: 3.8.4
+        with:
+          maven-version: 3.8.4
