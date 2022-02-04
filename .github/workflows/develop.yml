@@ -1,0 +1,26 @@
+name: Develop CI
+
+on:
+  push:
+    branches: develop
+    paths:
+      - backend/**
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Configure and checkout
+      - uses: ./.github/workflows/backend-config.yml
+          
+      - name: Compile the backend
+        working-directory: ./backend
+        run: mvn compile -DskipTests
+        
+   test:
+      runs-on: ubuntu-20.04
+      depends-on: [build]
+
+      - name: Test the backend
+        working-directory: ./backend
+        run: mvn clean test
