@@ -16,11 +16,12 @@ jobs:
       - name: Compile the backend
         working-directory: ./backend
         run: mvn compile -DskipTests
-        
-   test:
-      runs-on: ubuntu-20.04
-      depends-on: [build]
+      
+  test:
+    runs-on: ubuntu-20.04
+    needs: [build]
 
+    steps:
       - name: Test the backend
         working-directory: ./backend
         run: mvn clean test
