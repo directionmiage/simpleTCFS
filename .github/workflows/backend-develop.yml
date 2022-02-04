@@ -11,9 +11,12 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      - name: Compile the backend
-        working-directory: ./backend
-        run: mvn compile -DskipTests
+    - name: Checkout and configure
+      uses: ./.github/workflows/backend-config
+
+    - name: Compile the backend
+      working-directory: ./backend
+      run: mvn compile -DskipTests
       
   test:
     runs-on: ubuntu-20.04
