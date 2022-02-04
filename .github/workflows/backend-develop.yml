@@ -2,7 +2,8 @@ name: Develop CI
 
 on:
   push:
-    branches: develop
+    branches:
+      - develop
     paths:
       - backend/**
 
@@ -11,7 +12,6 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout and configure
-      - uses: actions/checkout@v2
       - uses: ./.github/workflows/backend-config
           
       - name: Compile the backend
