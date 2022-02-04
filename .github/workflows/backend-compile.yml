@@ -7,7 +7,7 @@ on:
 
 jobs:
   config:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Install Java 11 (Temurin)
