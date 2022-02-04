@@ -2,10 +2,9 @@ name: "Configure environment and compile backend"
 
 on:
   workflow_call:
-    branches:
-      - *
-    paths:
+    path:
       - backend/**
+
 jobs:
   config:
     runs-on: ubuntu-latest

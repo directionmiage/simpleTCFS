@@ -81,7 +81,7 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <!-- attached to Maven testx -->
+                    <!-- attached to Maven testxfea -->
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
