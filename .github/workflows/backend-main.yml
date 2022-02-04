@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Checkout and configure
-        uses: ./.github/workflows/backend-config
+        uses: .github/workflows/backend-config
 
       - name: Test the backend
         working-directory: ./backend
