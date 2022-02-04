@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/workflows/backend-base
+      - uses: ./github-actions/backend-compile.yml
 
   test:
     runs-on: ubuntu-20.04
