@@ -45,7 +45,7 @@
             <id>failsafe</id>
             <!-- Look at https://maven.apache.org/surefire/maven-surefire-plugin/examples/inclusion-exclusion.html
                  and https://maven.apache.org/surefire/maven-failsafe-plugin/examples/inclusion-exclusion.html
-                 for patterns of classes inclusion in tests & IT -->
+                 for patterns of classes inclusion in tests and IT -->
             <build>
                 <plugins>
                     <plugin>
