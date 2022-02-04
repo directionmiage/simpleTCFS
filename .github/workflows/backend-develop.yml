@@ -8,11 +8,11 @@ on:
       - backend/**
 
 jobs:
-  config:
+  build:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - uses: ./github-actions/backend-compile.yml
+      - uses: ./github/workflows/backend-compile.yml
 
 
   test:
