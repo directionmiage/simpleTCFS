@@ -1,6 +1,6 @@
 package fr.univcotedazur.simpletcfs.cli;
 
-import fr.univcotedazur.simpletcfs.cli.model.Customer;
+import fr.univcotedazur.simpletcfs.cli.model.CliCustomer;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 @Component
 public class CliContext {
 
-    private Map<String, Customer> customers;
+    private Map<String, CliCustomer> customers;
 
-    public Map<String, Customer> getCustomers() {
+    public Map<String, CliCustomer> getCustomers() {
         return customers;
     }
 
