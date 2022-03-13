@@ -20,6 +20,7 @@ import java.util.Set;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
+@RestControllerAdvice
 @RequestMapping(path = CustomerCareController.BASE_URI, produces = APPLICATION_JSON_VALUE)
 // referencing the same BASE_URI as Customer care to extend it hierarchically
 public class CartController {
@@ -44,6 +45,7 @@ public class CartController {
     }
 
     @ExceptionHandler({EmptyCartException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<ErrorDTO> handleExceptions(EmptyCartException e)  {
         ErrorDTO errorDTO = new ErrorDTO();
         errorDTO.setError("Cart is empty");
