@@ -1,31 +1,29 @@
 package fr.univcotedazur.simpletcfs.features;
 
-import fr.univcotedazur.simpletcfs.CartModifier;
-import fr.univcotedazur.simpletcfs.CartProcessor;
-import fr.univcotedazur.simpletcfs.CustomerFinder;
-import fr.univcotedazur.simpletcfs.CustomerRegistration;
+import fr.univcotedazur.simpletcfs.*;
 import fr.univcotedazur.simpletcfs.components.InMemoryDatabase;
-import fr.univcotedazur.simpletcfs.entities.Cookies;
-import fr.univcotedazur.simpletcfs.entities.Customer;
-import fr.univcotedazur.simpletcfs.entities.Item;
+import fr.univcotedazur.simpletcfs.entities.*;
 import fr.univcotedazur.simpletcfs.exceptions.AlreadyExistingCustomerException;
+import fr.univcotedazur.simpletcfs.exceptions.EmptyCartException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativeQuantityException;
-
-import io.cucumber.java.After;
+import fr.univcotedazur.simpletcfs.exceptions.PaymentException;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.when;
 
 @CucumberContextConfiguration
 @SpringBootTest
@@ -46,12 +44,18 @@ public class OrderingCookies {
     @Autowired
     private CustomerFinder finder;
 
+    @Autowired // Bug in the Cucumber/Mockito/Spring coordination: needs to add @Autowired
+    @MockBean
+    private Bank bankMock;
+
     private Customer customer;
     private Set<Item> cartContents;
+    private Order order;
 
     @Before
-    public void settingUpContext() {
+    public void settingUpContext() throws PaymentException {
         memory.flush();
+        when(bankMock.pay(any(Customer.class), anyDouble())).thenReturn(true);
     }
 
     @Given("a customer named {string} with credit card {string}")
@@ -95,6 +99,22 @@ public class OrderingCookies {
     public void thePriceOfSebSCartIsEqualsTo(String customerName, double expectedPrice) {
         customer = finder.findByName(customerName).get();
         assertEquals(expectedPrice, processor.price(customer), 0.01);
+    }
+
+    @And("{string} validates the cart and pays through the bank")
+    public void validatesTheCart(String customerName) throws EmptyCartException, PaymentException {
+        customer = finder.findByName(customerName).get();
+        order = processor.validate(customer);
+    }
+
+    @Then("the order amount is equals to {double}")
+    public void theOrderAmountIsEqualsTo(double expectedPrice) {
+        assertEquals(expectedPrice, order.getPrice(), 0.01);
+    }
+
+    @Then("the order status is {string}")
+    public void theOrderStatusIs(String state) {
+        assertEquals(OrderStatus.valueOf(state),order.getStatus());
     }
 
 }

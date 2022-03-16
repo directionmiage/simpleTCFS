@@ -1,6 +1,6 @@
 Feature: Ordering Cookies
 
-  This feature support the way a Customer can order cookies through the TCF system
+  This feature supports the way a Customer can order cookies through the TCF system
 
   Background:
     Given a customer named "Maurice" with credit card "1234896983"
@@ -43,3 +43,12 @@ Feature: Ordering Cookies
     When "Maurice" orders 5 x "CHOCOLALALA"
     And "Maurice" orders 3 x "DARK_TEMPTATION"
     Then the price of "Maurice"'s cart is equals to 12.20
+
+  Scenario: paying a cart with several cookies to a cart
+    When "Maurice" orders 5 x "CHOCOLALALA"
+    And "Maurice" orders 3 x "DARK_TEMPTATION"
+    Then "Maurice" validates the cart and pays through the bank
+    And the order amount is equals to 12.20
+    And the order status is "IN_PROGRESS"
+    And "Maurice" asks for his cart contents
+    And there is 0 item inside the cart
