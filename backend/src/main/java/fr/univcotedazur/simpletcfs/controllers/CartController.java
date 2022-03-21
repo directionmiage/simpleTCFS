@@ -35,40 +35,6 @@ public class CartController {
     @Autowired
     private CustomerFinder finder;
 
-    @ExceptionHandler({CustomerIdNotFoundException.class})
-    public ResponseEntity<ErrorDTO> handleExceptions(CustomerIdNotFoundException e)  {
-        ErrorDTO errorDTO = new ErrorDTO();
-        errorDTO.setError("Customer not found");
-        errorDTO.setDetails(e.getId() + " is not a valid customer Id");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDTO);
-    }
-
-    @ExceptionHandler({EmptyCartException.class})
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity<ErrorDTO> handleExceptions(EmptyCartException e)  {
-        ErrorDTO errorDTO = new ErrorDTO();
-        errorDTO.setError("Cart is empty");
-        errorDTO.setDetails("from Customer " + e.getName());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDTO);
-    }
-
-    @ExceptionHandler({NegativeQuantityException.class})
-    public ResponseEntity<ErrorDTO> handleExceptions(NegativeQuantityException e)  {
-        ErrorDTO errorDTO = new ErrorDTO();
-        errorDTO.setError("Attempting to update the cookie quantity to a negative value");
-        errorDTO.setDetails("from Customer " + e.getName() + "with cookie " + e.getCookie() +
-                " leading to quantity " + e.getPotentialQuantity());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDTO);
-    }
-
-    @ExceptionHandler({PaymentException.class})
-    public ResponseEntity<ErrorDTO> handleExceptions(PaymentException e)  {
-        ErrorDTO errorDTO = new ErrorDTO();
-        errorDTO.setError("Payment was rejected");
-        errorDTO.setDetails("from Customer " + e.getName() + " for amount " + e.getAmount());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDTO);
-    }
-
     @PostMapping(path = CART_URI, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<Item> updateCustomerCart(@PathVariable("customerId") String customerId, @RequestBody Item it) throws CustomerIdNotFoundException, NegativeQuantityException {
         int newQuantity = cart.update(retrieveCustomer(customerId),it);
