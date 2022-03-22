@@ -1,10 +1,11 @@
 package fr.univcotedazur.simpletcfs.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-public class Order implements Serializable {
+public class Order {
 
     private String id;
     private Customer customer;
@@ -61,11 +62,7 @@ public class Order implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = getId().hashCode();
-        result = 31 * result + getCustomer().hashCode();
-        result = 31 * result + getItems().hashCode();
-        result = 31 * result + getStatus().hashCode();
-        return result;
+        return Objects.hash(customer, items, status);
     }
 
 }
