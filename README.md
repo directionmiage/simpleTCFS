@@ -27,8 +27,8 @@ _The Cookie Factory_ (TCF) is a major bakery brand in the USA. The _Cookie on De
 ## How to use this repository
 
   * The `develop` branch (the default one) represents the system under development. 
-    * The [branch tagged v1.0.0](https://github.com/CookieFactoryInSpring/simpleTCFS/tree/v1.0.0) contains the code that implements the system without persistence;
-    * Other releases will be out soon.
+    * The [commit tagged v1.0.0](https://github.com/CookieFactoryInSpring/simpleTCFS/tree/v1.0.0) references the codebase that implements the system without persistence;
+    * The codebase including persistence will be out soon.
 
 The following "build and run" documentation is divided in three versions from bare run to "everything in a container" run.
 
