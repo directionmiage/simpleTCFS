@@ -1,22 +1,35 @@
 package fr.univcotedazur.simpletcfs.entities;
 
-import java.io.Serializable;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
+@Entity
+@Table(name= "orders")
 public class Order {
 
-    private String id;
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne
+    @NotNull
     private Customer customer;
+
+    @ElementCollection
     private Set<Item> items;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     public Order(Customer customer, Set<Item> items) {
         this.customer = customer;
         this.items = items;
         this.status = OrderStatus.VALIDATED;
-        this.id = UUID.randomUUID().toString();
+    }
+
+    public Order() {
     }
 
     public OrderStatus getStatus() {
@@ -27,7 +40,7 @@ public class Order {
         this.status = status;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -53,16 +66,14 @@ public class Order {
         if (this == o) return true;
         if (!(o instanceof Order)) return false;
         Order order = (Order) o;
-        if (!getId().equals(order.getId())) return false;
-        if (!getCustomer().equals(order.getCustomer())) return false;
-        if (!getItems().equals(order.getItems())) return false;
+        if (getCustomer() != null ? !getCustomer().getName().equals(order.getCustomer().getName()) : order.getCustomer() != null)
+            return false;
+        if (getItems() != null ? !getItems().equals(order.getItems()) : order.getItems() != null) return false;
         return getStatus() == order.getStatus();
-
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(customer, items, status);
     }
-
 }

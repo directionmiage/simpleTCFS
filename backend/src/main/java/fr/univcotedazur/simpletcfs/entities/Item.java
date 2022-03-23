@@ -1,10 +1,21 @@
 package fr.univcotedazur.simpletcfs.entities;
 
+
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
+
+@Embeddable
 public class Item {
 
+    @Enumerated(EnumType.STRING)
+    @NotNull
     private Cookies cookie;
+
+    @NotNull
     private int quantity;
 
     public Item() {}
@@ -43,5 +54,4 @@ public class Item {
     public int hashCode() {
         return Objects.hash(cookie, quantity);
     }
-
 }
