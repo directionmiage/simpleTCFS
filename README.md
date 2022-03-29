@@ -32,7 +32,7 @@ _The Cookie Factory_ (TCF) is a major bakery brand in the USA. The _Cookie on De
 
 The following "build and run" documentation is divided in three versions from bare run to "everything in a container" run.
 
-### Basic build and run
+### Basic build and run (with persistence)
 
 The first step is to build the backend and the cli. This can be done manually using the command:
 
@@ -44,13 +44,21 @@ from both folders (it will generate the corresponding jar into the target folder
     
 to run both unit and integration tests. See the page on [Testing](chapters/Testing.md#running-different-types-of-test-with-maven) for more details.
 
+With a postgres DB running inside docker but accessible outside (in your host), first run:
+
+   ./run-postgres-out-of-docker-compose.sh
+   
+This will run a postgres server listening on the 5432 port of your host machine.
+
+Do not forget to run the dotNet external system as well!
+
 To run the server (from the corresponding folder):
 
-    mvn spring-boot:run
+    POSTGRES_HOST=127.0.0.1 mvn spring-boot:run
     
 or
 
-    java -jar target/simpleTCFS-0.0.1-SNAPSHOT.jar
+    POSTGRES_HOST=127.0.0.1 java -jar target/simpleTCFS-0.0.1-SNAPSHOT.jar
 
 To run the cli (from the corresponding folder):
 
