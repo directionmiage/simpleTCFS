@@ -54,11 +54,11 @@ Do not forget to run the dotNet external system as well!
 
 To run the server (from the corresponding folder):
 
-    POSTGRES_HOST=127.0.0.1 mvn spring-boot:run
+    POSTGRES_HOST=127.0.0.1:5432 mvn spring-boot:run
     
 or
 
-    POSTGRES_HOST=127.0.0.1 java -jar target/simpleTCFS-0.0.1-SNAPSHOT.jar
+    POSTGRES_HOST=127.0.0.1:5432 java -jar target/simpleTCFS-0.0.1-SNAPSHOT.jar
 
 To run the cli (from the corresponding folder):
 
@@ -74,7 +74,9 @@ At startup the cli must provide the following prompt :
 
 Running the command `help` will guide you in the CLI usage.
 
-### Containerized backend
+### Containerized backend (only without persistence)
+
+*The following explanations are only valid for the version without persistence.*
 
 In this version, we will run the cli as previously, however we will run the backend in a docker container.
 
@@ -84,11 +86,15 @@ In this version, we will run the cli as previously, however we will run the back
 
 Note: It's necessary to stop the "basic" version of the backend to release the 8080 port.
 
-### Everything containerized and composed
+### Everything containerized and composed (with persistence)
 
-We will now run both the backend and the CLI into docker. It requires to build the cli docker image (the backend's one is considered built during the previous step).
+We will now run the backend with postgres, the CLI, and the external system into docker. It requires to build the cli docker and the dotNet external system images (the backend's one is considered built during the previous step).
 
 To build the cli docker image from the corresponding folder, the script `build.sh` can be used or directly the command `docker build --build-arg JAR_FILE=target/cli-0.0.1-SNAPSHOT.jar -t pcollet/tcf-spring-cli .`
+
+To build the external system, use also its [`build.sh`](dotNet/build.sh).
+
+As for the postgres database, we reuse its standard image and configure several environment variables that will be use to configure the backend (so that the JPA configuration will connect to the DB).
 
 The whole system can now be deployed locally from the root folder using the command:
 
@@ -98,7 +104,16 @@ after few seconds:
 
     docker attach cli
 
-enables to use the containerized cli (see docker-compose.yml and the devops lecture for more information).
+enables to use the containerized cli (see docker-compose.yml and the devops lecture for more information). In the spring shell, you can run a demo with `script demo.txt`.
+
+As for persistence, you can use the `psql` command within the postgres image to connect to the DB with a SQL cli:
+
+    docker exec -it db psql -U postgresuser -W -d tcf-db
+    
+And then commands like:
+
+   * `\dt+` to list all tables
+   * `SELECT * FROM customer;` to check that the two customers have been created by the demo script.
 
 Note that you cannot run the two docker images separately and expect them to communicate with each other, each one being isolated in its own container. That's one of the main purpose of `docker-compose` to enable composition of container, with by default a shared network.
 
