@@ -66,7 +66,7 @@ public class OrderRepositoryTest {
         Assertions.assertTrue(orderToGet.isPresent());
         Order foundOrder = orderToGet.get();
         // the order is found by its repository,
-        // its items are loaded (@ElementCollection on items is lazy, but here "findBy" gets them with the order)
+        // its items are loaded when we access them IN A TRANSACTION (@ElementCollection on items is lazy)
         Assertions.assertEquals(1,foundOrder.getItems().size());
         // the customer attribute is not a collection, it is loaded with the order
         Assertions.assertEquals("john",foundOrder.getCustomer().getName());
