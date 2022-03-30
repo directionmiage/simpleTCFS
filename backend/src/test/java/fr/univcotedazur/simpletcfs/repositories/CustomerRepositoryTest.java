@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolationException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest // Only run a test container with the JPA layer (only repositories are up)
+// @DataJpaTest is "transactional rollback by default
 class CustomerRepositoryTest {
 
     @Autowired
@@ -19,6 +20,7 @@ class CustomerRepositoryTest {
     @Test
     void testIdGeneration() {
         Customer john = new Customer("john", "1234567890");
+        Assertions.assertNull(john.getId());
         customerRepository.saveAndFlush(john); // save in the persistent context and force saving in the DB (thus ensuring validation by Hibernate)
         Assertions.assertNotNull(john.getId());
     }

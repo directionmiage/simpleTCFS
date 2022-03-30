@@ -2,7 +2,7 @@
 
 #Preparing environment
 echo "Compiling the TCF Spring backend"
-mvn clean package
+mvn clean verify
 echo "Done"
 
 # building the docker image

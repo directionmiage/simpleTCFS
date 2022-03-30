@@ -32,7 +32,7 @@ _The Cookie Factory_ (TCF) is a major bakery brand in the USA. The _Cookie on De
 
 The following "build and run" documentation is divided in three versions from bare run to "everything in a container" run.
 
-### Basic build and run
+### Basic build and run (with persistence)
 
 The first step is to build the backend and the cli. This can be done manually using the command:
 
@@ -44,13 +44,21 @@ from both folders (it will generate the corresponding jar into the target folder
     
 to run both unit and integration tests. See the page on [Testing](chapters/Testing.md#running-different-types-of-test-with-maven) for more details.
 
+With a postgres DB running inside docker but accessible outside (in your host), first run:
+
+   ./run-postgres-out-of-docker-compose.sh
+   
+This will run a postgres server listening on the 5432 port of your host machine.
+
+Do not forget to run the dotNet external system as well!
+
 To run the server (from the corresponding folder):
 
-    mvn spring-boot:run
+    POSTGRES_HOST=127.0.0.1:5432 mvn spring-boot:run
     
 or
 
-    java -jar target/simpleTCFS-0.0.1-SNAPSHOT.jar
+    POSTGRES_HOST=127.0.0.1:5432 java -jar target/simpleTCFS-0.0.1-SNAPSHOT.jar
 
 To run the cli (from the corresponding folder):
 
@@ -66,7 +74,9 @@ At startup the cli must provide the following prompt :
 
 Running the command `help` will guide you in the CLI usage.
 
-### Containerized backend
+### Containerized backend (only without persistence)
+
+*The following explanations are only valid for the version without persistence.*
 
 In this version, we will run the cli as previously, however we will run the backend in a docker container.
 
@@ -76,21 +86,34 @@ In this version, we will run the cli as previously, however we will run the back
 
 Note: It's necessary to stop the "basic" version of the backend to release the 8080 port.
 
-### Everything containerized and composed
+### Everything containerized and composed (with persistence)
 
-We will now run both the backend and the CLI into docker. It requires to build the cli docker image (the backend's one is considered built during the previous step).
+We will now run the backend with postgres, the CLI, and the external system into docker. It requires to build the cli docker and the dotNet external system images (the backend's one is considered built during the previous step).
 
 To build the cli docker image from the corresponding folder, the script `build.sh` can be used or directly the command `docker build --build-arg JAR_FILE=target/cli-0.0.1-SNAPSHOT.jar -t pcollet/tcf-spring-cli .`
+
+To build the external system, use also its [`build.sh`](dotNet/build.sh).
+
+As for the postgres database, we reuse its standard image and configure several environment variables that will be use to configure the backend (so that the JPA configuration will connect to the DB).
 
 The whole system can now be deployed locally from the root folder using the command:
 
     docker-compose up -d
     
-after few seconds:
+after few seconds (be sure to wait enough to let JPA set up the database):
 
     docker attach cli
 
-enables to use the containerized cli (see docker-compose.yml and the devops lecture for more information).
+enables to use the containerized cli (see docker-compose.yml and the devops lecture for more information). In the spring shell, you can run a demo with `script demo.txt`.
+
+As for persistence, you can use the `psql` command within the postgres image to connect to the DB with a SQL cli:
+
+    docker exec -it db psql -U postgresuser -W -d tcf-db
+    
+And then commands like:
+
+   * `\dt+` to list all tables
+   * `SELECT * FROM customer;` to check that the two customers have been created by the demo script.
 
 Note that you cannot run the two docker images separately and expect them to communicate with each other, each one being isolated in its own container. That's one of the main purpose of `docker-compose` to enable composition of container, with by default a shared network.
 
