@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -41,6 +42,36 @@ public class OrderRepositoryTest {
     }
 
     @Test
+    void testOrderCreationWithLazyFetching() {
+        Assertions.assertNotNull(orderId);
+        Optional<Order> orderToGet = orderRepository.findById(orderId);
+        Assertions.assertTrue(orderToGet.isPresent());
+        Order foundOrder = orderToGet.get();
+        // the order is found by its repository,
+        // its items are loaded when we access them IN A TRANSACTION (@ElementCollection on items is lazy)
+        Assertions.assertEquals(1,foundOrder.getItems().size());
+        // the customer attribute is not a collection, it is loaded with the order
+        Assertions.assertEquals("john",foundOrder.getCustomer().getName());
+        // the orders of the customer are loaded when they are accessed IN A TRANSACTION
+        Assertions.assertEquals(1, foundOrder.getCustomer().getOrders().size());
+    }
+
+    @Test
+    @Transactional()
+    void testCascadingRemove() {
+        Optional<Order> orderToGet = orderRepository.findById(orderId);
+        Assertions.assertTrue(orderToGet.isPresent());
+        Order foundOrder = orderToGet.get();
+        Customer customerToBeRemoved = foundOrder.getCustomer();
+        customerRepository.delete(customerToBeRemoved);
+        customerRepository.flush();
+        // get the order again
+        orderToGet = orderRepository.findById(orderId);
+        Assertions.assertFalse(orderToGet.isPresent());
+    }
+
+
+    @Test
     void testOrderSpELquery() {
         Customer john = customerRepository.findCustomerByName("john").get();
         List<Order> validatedOrders = orderRepository.findOrdersForCustomerWithStatus(john, OrderStatus.VALIDATED,
@@ -57,21 +88,6 @@ public class OrderRepositoryTest {
         retrievedOrder.setStatus(OrderStatus.IN_PROGRESS);
         Assertions.assertEquals(1, orderRepository.findOrdersForCustomerWithStatus(john, OrderStatus.IN_PROGRESS,
                 Sort.by(Sort.Direction.DESC,"id")).size());
-    }
-
-    @Test
-    void testOrderCreation() {
-        Assertions.assertNotNull(orderId);
-        Optional<Order> orderToGet = orderRepository.findById(orderId);
-        Assertions.assertTrue(orderToGet.isPresent());
-        Order foundOrder = orderToGet.get();
-        // the order is found by its repository,
-        // its items are loaded when we access them IN A TRANSACTION (@ElementCollection on items is lazy)
-        Assertions.assertEquals(1,foundOrder.getItems().size());
-        // the customer attribute is not a collection, it is loaded with the order
-        Assertions.assertEquals("john",foundOrder.getCustomer().getName());
-        // the orders of the customer are loaded when they are accessed IN A TRANSACTION
-        Assertions.assertEquals(1, foundOrder.getCustomer().getOrders().size());
     }
 
     @Test
