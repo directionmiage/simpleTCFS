@@ -100,7 +100,7 @@ The whole system can now be deployed locally from the root folder using the comm
 
     docker-compose up -d
     
-after few seconds:
+after few seconds (be sure to wait enough to let JPA set up the database):
 
     docker attach cli
 
