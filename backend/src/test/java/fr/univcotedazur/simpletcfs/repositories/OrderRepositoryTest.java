@@ -57,7 +57,6 @@ public class OrderRepositoryTest {
     }
 
     @Test
-    @Transactional()
     void testCascadingRemove() {
         Optional<Order> orderToGet = orderRepository.findById(orderId);
         Assertions.assertTrue(orderToGet.isPresent());
